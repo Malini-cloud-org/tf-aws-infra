@@ -3,7 +3,7 @@ data "aws_availability_zones" "available" {}
 
 # Count the number of AZs to use
 locals {
-  az_count = length(data.aws_availability_zones.available.names)
+  az_count     = length(data.aws_availability_zones.available.names)
   subnet_count = var.subnet_count > local.az_count ? local.az_count : var.subnet_count
 }
 resource "aws_subnet" "public" {
