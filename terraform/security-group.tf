@@ -2,7 +2,8 @@ resource "aws_security_group" "app_sg" {
   name        = "application_security_group"
   description = "Security group for web application"
 
-  vpc_id = aws_vpc.csye6225_vpc.id # Reference the dynamically created VPC
+  vpc_id     = aws_vpc.csye6225_vpc.id # Reference the dynamically created VPC
+  depends_on = [aws_vpc.csye6225_vpc]
 
   ingress {
     description = "SSH access"
@@ -41,5 +42,34 @@ resource "aws_security_group" "app_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
+// Security group for database
+# Database Security Group
+resource "aws_security_group" "db_security_group" {
+  name        = var.db_security_group_name
+  description = "Database security group for PostgreSQL RDS instance"
+  vpc_id      = aws_vpc.csye6225_vpc.id
+
+  # Allow inbound traffic from the application security group
+  ingress {
+    from_port       = var.db_port
+    to_port         = var.db_port
+    protocol        = "tcp"
+    security_groups = [aws_security_group.app_sg.id]
+  }
+
+  # Allow all outbound traffic (default AWS behavior)
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = var.db_security_group_name
   }
 }
