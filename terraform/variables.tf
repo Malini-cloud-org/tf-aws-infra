@@ -144,4 +144,14 @@ variable "multi_az" {
   type        = bool
   description = "Enable Multi-AZ deployment (optional)"
   default     = false
+
 }
+
+
+variable "domain_name" {
+  description = "The name of the Route 53 hosted zone"
+  type        = string
+  default     = "dev.skydev.me"
+}
+
+

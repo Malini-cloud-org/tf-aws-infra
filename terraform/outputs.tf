@@ -17,3 +17,7 @@ output "rds_endpoint" {
   value       = aws_db_instance.rds_instance.endpoint
   description = "The endpoint of the RDS instance"
 }
+
+output "a_record" {
+  value = aws_route53_record.ec2_a_record.fqdn # Fully qualified domain name
+}

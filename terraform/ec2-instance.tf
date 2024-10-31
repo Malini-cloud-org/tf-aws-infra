@@ -5,7 +5,7 @@ resource "aws_instance" "web_app" {
   subnet_id                   = aws_subnet.public[0].id
   associate_public_ip_address = true # Ensure it gets a public IP
   vpc_security_group_ids      = [aws_security_group.app_sg.id]
-  key_name                    = var.key_name #ssh key name for ec2
+  # key_name                    = var.key_name #ssh key name for ec2
   root_block_device {
     volume_size           = 25
     volume_type           = "gp2"
@@ -13,6 +13,9 @@ resource "aws_instance" "web_app" {
   }
 
   disable_api_termination = false # Allow termination
+
+  # Attach IAM role using instance profile
+  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
 
   user_data = <<-EOF
 #!/bin/bash
@@ -29,6 +32,8 @@ DB_USERNAME="${var.db_username}"
 DB_PASSWORD="${var.db_password}"
 DB_DIALECT="${var.db_engine}"
 PORT="${var.app_port}"
+S3_BUCKET_NAME="${aws_s3_bucket.s3_bucket.id}"
+AWS_REGION="${var.region}"
 
 
 echo "Updating .env file with dynamic variables..."
@@ -39,6 +44,9 @@ DB_NAME=$DB_NAME
 DB_USERNAME=$DB_USERNAME
 DB_PASSWORD=$DB_PASSWORD
 DB_DIALECT=$DB_DIALECT
+S3_BUCKET_NAME=$S3_BUCKET_NAME
+AWS_REGION=$AWS_REGION
+
 PORT=$PORT
 EOT
 
@@ -52,6 +60,13 @@ fi
 
 sudo chown csye6225:csye6225 /opt/webapp/service/.env
 
+#Configure Cloudwatch agent
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/cloudwatch_config.json -s
+
+sudo systemctl enable amazon-cloudwatch-agent
+sudo systemctl restart amazon-cloudwatch-agent
+
+#Restart service file
 sudo systemctl daemon-reload
 sudo systemctl enable csye6225-aws.service
 
