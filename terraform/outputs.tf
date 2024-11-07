@@ -19,5 +19,6 @@ output "rds_endpoint" {
 }
 
 output "a_record" {
-  value = aws_route53_record.ec2_a_record.fqdn # Fully qualified domain name
+  # value = aws_route53_record.ec2_a_record.fqdn # Fully qualified domain name
+  value = aws_route53_record.load_balancer_record.fqdn
 }

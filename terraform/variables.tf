@@ -154,4 +154,64 @@ variable "domain_name" {
   default     = "dev.skydev.me"
 }
 
+variable "min_size" {
+  description = "Minimum number of instances in the auto-scaling group"
+  type        = number
+  default     = 1
+}
+
+variable "max_size" {
+  description = "Maximum number of instances in the auto-scaling group"
+  type        = number
+  default     = 4
+}
+
+variable "desired_capacity" {
+  description = "Desired number of instances in the auto-scaling group"
+  type        = number
+  default     = 1
+}
+
+variable "cooldown" {
+  description = "Cooldown period for auto-scaling policies"
+  type        = number
+  default     = 60
+}
+
+variable "scale_up_threshold" {
+  description = "Threshold for scale up alarm (CPU utilization percentage)"
+  type        = number
+  default     = 10
+}
+
+variable "scale_up_period" {
+  description = "Period for scale up alarm (in seconds)"
+  type        = number
+  default     = 60
+}
+
+variable "scale_up_evaluation_periods" {
+  description = "Number of evaluation periods for scale up alarm"
+  type        = number
+  default     = 1
+}
+
+variable "scale_down_threshold" {
+  description = "Threshold for scale down alarm (CPU utilization percentage)"
+  type        = number
+  default     = 7
+}
+
+variable "scale_down_period" {
+  description = "Period for scale down alarm (in seconds)"
+  type        = number
+  default     = 60
+}
+
+variable "scale_down_evaluation_periods" {
+  description = "Number of evaluation periods for scale down alarm"
+  type        = number
+  default     = 1
+}
+
 
