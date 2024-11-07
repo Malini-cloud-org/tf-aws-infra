@@ -6,10 +6,10 @@ resource "aws_security_group" "app_sg" {
   depends_on = [aws_vpc.csye6225_vpc]
 
   ingress {
-    description     = "SSH access"
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
+    description = "SSH access"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
     # cidr_blocks     = ["0.0.0.0/0"]                            // Only for testing
     security_groups = [aws_security_group.load_balancer_sg.id] # Allow traffic only from the load balancer
   }
