@@ -17,7 +17,12 @@ DB_DIALECT="${var.db_engine}"
 PORT="${var.app_port}"
 S3_BUCKET_NAME="${aws_s3_bucket.s3_bucket.id}"
 AWS_REGION="${var.region}"
+SNS_TOPIC_ARN=${aws_sns_topic.user_creation_topic.arn}
+BASE_URL="${var.base_url}"
 
+# # Pass the SNS_TOPIC_ARN to the application (this should be picked up in the app)
+# echo "SNS_TOPIC_ARN=$SNS_TOPIC_ARN" | sudo tee -a /opt/webapp/service/.env > /dev/null
+# echo "BASE_URL=$BASE_URL" | sudo tee -a /opt/webapp/service/.env > /dev/null  # Add BASE_URL to .env file
 
 echo "Updating .env file with dynamic variables..."
 cat <<EOT | sudo tee /opt/webapp/service/.env > /dev/null
@@ -29,8 +34,9 @@ DB_PASSWORD=$DB_PASSWORD
 DB_DIALECT=$DB_DIALECT
 S3_BUCKET_NAME=$S3_BUCKET_NAME
 AWS_REGION=$AWS_REGION
-
 PORT=$PORT
+SNS_TOPIC_ARN=$SNS_TOPIC_ARN
+BASE_URL=$BASE_URL
 EOT
 
 echo "Updated .env succesfully"
