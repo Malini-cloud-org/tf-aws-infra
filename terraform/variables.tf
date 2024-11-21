@@ -215,3 +215,62 @@ variable "scale_down_evaluation_periods" {
 }
 
 
+variable "sns_topic_name" {
+  description = "The name of the SNS topic for user creation"
+  type        = string
+  default     = "user-creation-topic"
+}
+
+variable "sns_display_name" {
+  description = "The display name of the SNS topic"
+  type        = string
+  default     = "User Creation SNS Topic"
+}
+
+variable "sns_topic_policy" {
+  description = "The policy for SNS topic"
+  type        = string
+  default     = "{}"
+}
+
+# Lambda function timeout in seconds (up to 15 minutes = 900 seconds)
+variable "lambda_timeout" {
+  description = "Lambda function timeout in seconds"
+  type        = number
+  default     = 900 # Default value: 15 minutes
+}
+
+# Lambda function memory size in MB
+variable "lambda_memory_size" {
+  description = "Lambda function memory size in MB"
+  type        = number
+  default     = 128 # Default memory size
+}
+
+# Path to the Lambda function deployment package (the ZIP file)
+variable "lambda_deployment_package_path" {
+  description = "The local path to the Lambda function zip package"
+  type        = string
+  default     = "./serverless.zip" # Update with correct local path
+}
+
+# Variable to specify the sender email address
+variable "email_sender" {
+  description = "The sender email address for sending verification emails"
+  type        = string
+  default     = "no-reply@dev.skydev.me"
+}
+
+#Variable for the base URL for the email verification link
+variable "base_url" {
+  description = "The base URL of the web application for email verification link"
+  type        = string
+  default     = "http://dev.skydev.me"
+}
+
+variable "sendgrid_api_key" {
+  description = "SendGrid API Key"
+  type        = string
+  default     = "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"
+}
+

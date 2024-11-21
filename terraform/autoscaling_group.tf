@@ -3,7 +3,7 @@ resource "aws_autoscaling_group" "web_app_asg" {
     id      = aws_launch_template.csye6225_asg.id
     version = "$Latest"
   }
-
+  name                = "csye6225_asg"
   min_size            = var.min_size
   max_size            = var.max_size
   desired_capacity    = var.desired_capacity
