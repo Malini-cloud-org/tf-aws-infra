@@ -95,3 +95,63 @@ resource "aws_iam_instance_profile" "ec2_profile" {
   role = aws_iam_role.ec2_role.name
 }
 
+
+
+resource "aws_iam_role_policy" "secrets_manager_access" {
+  name = "secrets-manager-access"
+
+  role = aws_iam_role.ec2_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = [
+          aws_secretsmanager_secret.db_password.arn, # Database Password
+          # aws_secretsmanager_secret.email_service_credentials.arn  # SendGrid API Key
+        ]
+      },
+
+      {
+        Effect : "Allow",
+        Action : [
+          "kms:Decrypt"
+        ],
+        Resource : [
+          "arn:aws:kms:${var.region}:${var.aws_account_id}:key/${aws_kms_key.secrets_kms_key.id}"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "lambda_secrets_manager_access" {
+  name = "lambda-secrets-manager-access"
+
+  role = aws_iam_role.lambda_execution_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = aws_secretsmanager_secret.email_service_credentials.arn # Only the SendGrid API Key
+      },
+
+      {
+        Effect = "Allow",
+        Action = [
+          "kms:Decrypt"
+        ],
+        Resource = aws_kms_key.secrets_kms_key.arn
+      }
+    ]
+  })
+}

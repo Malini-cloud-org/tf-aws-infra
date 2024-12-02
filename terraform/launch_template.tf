@@ -5,6 +5,16 @@ data "template_file" "user_data" {
 set -e
 set -x
 
+# Install AWS CLI 
+sudo apt-get update -y
+sudo apt-get install -y awscli
+sudo apt-get install -y jq
+
+# Retrieve database password from Secrets Manager
+DB_PASSWORD=$(aws secretsmanager get-secret-value --secret-id ${aws_secretsmanager_secret.db_password.id} --query SecretString --output text --region ${var.region}| jq -r .password)
+
+
+
 sudo chown -R csye6225:csye6225 /opt/webapp
 cd /opt/webapp/service || { echo "Directory /opt/webapp/service not found!"; exit 1; }
 
@@ -12,7 +22,7 @@ DB_HOST="${aws_db_instance.rds_instance.address}"
 DB_PORT="${var.db_port}"
 DB_NAME="${var.db_name}"
 DB_USERNAME="${var.db_username}"
-DB_PASSWORD="${var.db_password}"
+
 DB_DIALECT="${var.db_engine}"
 PORT="${var.app_port}"
 S3_BUCKET_NAME="${aws_s3_bucket.s3_bucket.id}"
@@ -62,6 +72,7 @@ sudo systemctl enable csye6225-aws.service
 echo "Restarting csye6225-aws.service..."
 sudo systemctl restart csye6225-aws.service
 
+
 echo "Checking csye6225-aws.service..."
 sudo systemctl status csye6225-aws.service --no-pager
 EOF
@@ -92,6 +103,17 @@ resource "aws_launch_template" "csye6225_asg" {
   }
 
   user_data = base64encode(data.template_file.user_data.rendered) # Use the template with Base64 encoding
+
+  block_device_mappings {
+    device_name = "/dev/sda1"
+    ebs {
+      delete_on_termination = true
+      volume_size           = 50
+      volume_type           = "gp2"
+      encrypted             = true                        # Enable encryption with KMS
+      kms_key_id            = aws_kms_key.ebs_kms_key.arn # Attach KMS key for EC2 encryption
+    }
+  }
 
 
 }
