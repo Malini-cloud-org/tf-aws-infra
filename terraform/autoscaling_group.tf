@@ -3,13 +3,13 @@ resource "aws_autoscaling_group" "web_app_asg" {
     id      = aws_launch_template.csye6225_asg.id
     version = "$Latest"
   }
-  name                = "csye6225_asg"
-  min_size            = var.min_size
-  max_size            = var.max_size
-  desired_capacity    = var.desired_capacity
-  default_cooldown    = var.cooldown
+  name                    = "csye6225_asg"
+  min_size                = var.min_size
+  max_size                = var.max_size
+  desired_capacity        = var.desired_capacity
+  default_cooldown        = var.cooldown
   default_instance_warmup = 300
-  vpc_zone_identifier = [for subnet in aws_subnet.public : subnet.id] # Public subnets
+  vpc_zone_identifier     = [for subnet in aws_subnet.public : subnet.id] # Public subnets
 
   tag {
     key                 = "Name"

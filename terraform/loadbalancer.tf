@@ -48,7 +48,7 @@ resource "aws_lb_listener" "https_listener" {
   protocol = "HTTPS"
 
   ssl_policy      = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = data.aws_acm_certificate.issued.arn
+  certificate_arn = data.aws_acm_certificate.issued.arn
   # certificate_arn = "arn:aws:acm:us-east-1:273354658804:certificate/31758b89-c015-421b-973d-d151b18b772c"
 
   default_action {
