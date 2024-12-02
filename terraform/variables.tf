@@ -121,12 +121,12 @@ variable "db_username" {
   default     = "csye6225"
 }
 
-variable "db_password" {
-  type        = string
-  description = "Master password for the RDS instance"
-  sensitive   = true # Ensures it is not displayed in logs
-  default     = "Yk867-tSjz>d"
-}
+# variable "db_password" {
+#   type        = string
+#   description = "Master password for the RDS instance"
+#   sensitive   = true # Ensures it is not displayed in logs
+#   default     = "Yk867-tSjz>d"
+# }
 
 variable "db_name" {
   type        = string
@@ -274,3 +274,26 @@ variable "sendgrid_api_key" {
   default     = "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"
 }
 
+variable "aws_account_id" {
+  description = "AWS Account ID"
+  type        = string
+  default     = "273354658804" #demo
+}
+
+variable "password_length" {
+  description = "The length of the database password"
+  type        = number
+  default     = 16 # Default value can be changed as per your requirements
+}
+
+variable "password_special" {
+  description = "Whether to include special characters in the password"
+  type        = bool
+  default     = true
+}
+
+variable "password_override_special" {
+  description = "Custom special characters for the password"
+  type        = string
+  default     = "!#$%&*()-_=+[]{}<>:?"
+}
