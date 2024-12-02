@@ -8,6 +8,7 @@ resource "aws_autoscaling_group" "web_app_asg" {
   max_size            = var.max_size
   desired_capacity    = var.desired_capacity
   default_cooldown    = var.cooldown
+  default_instance_warmup = 300
   vpc_zone_identifier = [for subnet in aws_subnet.public : subnet.id] # Public subnets
 
   tag {
