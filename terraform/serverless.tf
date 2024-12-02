@@ -75,11 +75,7 @@ resource "aws_lambda_function" "send_email_lambda" {
 
   environment {
     variables = {
-      #   SENDGRID_API_KEY = jsondecode(aws_secretsmanager_secret_version.sendgrid_api_secret_version.secret_string)["api_key"]
-      SENDGRID_API_KEY = var.sendgrid_api_key
-      EMAIL_SENDER     = var.email_sender
-      BASE_URL         = var.base_url
-      # SNS_TOPIC_ARN    = aws_sns_topic.user_creation_topic.arn
+      SECRET_NAME = aws_secretsmanager_secret.email_service_credentials.name
     }
   }
 
@@ -109,15 +105,5 @@ resource "aws_sns_topic_subscription" "lambda_subscription" {
   endpoint  = aws_lambda_function.send_email_lambda.arn
 }
 
-# resource "aws_secretsmanager_secret" "sendgrid_api_secret" {
-#   name = "sendgrid_api_secret"
-# }
-# resource "aws_secretsmanager_secret_version" "sendgrid_api_secret_version" {
-#   secret_id = aws_secretsmanager_secret.sendgrid_api_secret.id
-#   secret_string = jsonencode({
-#     api_key      = var.sendgrid_api_key
-#     sender_email = var.email_sender
-#   })
-# }
 
 
