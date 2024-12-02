@@ -101,13 +101,14 @@ resource "aws_db_subnet_group" "rds_private_subnet_group" {
   }
 }
 resource "aws_db_instance" "rds_instance" {
-  identifier             = var.db_instance_identifier
-  engine                 = var.db_engine
-  engine_version         = var.db_engine_version
-  instance_class         = var.db_instance_class
-  allocated_storage      = var.db_allocated_storage
-  username               = var.db_username
-  password               = var.db_password
+  identifier        = var.db_instance_identifier
+  engine            = var.db_engine
+  engine_version    = var.db_engine_version
+  instance_class    = var.db_instance_class
+  allocated_storage = var.db_allocated_storage
+  username          = var.db_username
+  password          = random_password.db_password.result # Use the randomly generated password
+  # password               = var.db_password
   db_name                = var.db_name
   parameter_group_name   = aws_db_parameter_group.postgres_parameter_group.name
   vpc_security_group_ids = [aws_security_group.db_security_group.id]
@@ -115,10 +116,13 @@ resource "aws_db_instance" "rds_instance" {
   publicly_accessible    = false
   multi_az               = var.multi_az
   skip_final_snapshot    = true
+  storage_encrypted      = true
+  kms_key_id             = aws_kms_key.rds_kms_key.arn
 
   depends_on = [
     aws_db_subnet_group.rds_private_subnet_group,
-    aws_security_group.db_security_group
+    aws_security_group.db_security_group,
+    aws_kms_key.rds_kms_key
   ]
   tags = {
     Name = var.db_instance_identifier
