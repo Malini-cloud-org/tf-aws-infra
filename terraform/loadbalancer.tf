@@ -6,10 +6,10 @@ resource "aws_lb_target_group" "web_app_target_group" {
   vpc_id   = aws_vpc.csye6225_vpc.id
 
   health_check {
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
     timeout             = 10
-    interval            = 30
+    interval            = 120
     path                = "/healthz"
   }
 
@@ -34,11 +34,22 @@ resource "aws_lb" "web_app_lb" {
   }
 }
 
+#Issued certificate
+data "aws_acm_certificate" "issued" {
+  domain   = var.domain_name
+  statuses = ["ISSUED"]
+}
 # Create a Listener for the Load Balancer
-resource "aws_lb_listener" "http_listener" {
+resource "aws_lb_listener" "https_listener" {
   load_balancer_arn = aws_lb.web_app_lb.arn
-  port              = 80
-  protocol          = "HTTP"
+  # port              = 80
+  # protocol          = "HTTP"
+  port     = 443
+  protocol = "HTTPS"
+
+  ssl_policy      = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = data.aws_acm_certificate.issued.arn
+  # certificate_arn = "arn:aws:acm:us-east-1:273354658804:certificate/31758b89-c015-421b-973d-d151b18b772c"
 
   default_action {
     type             = "forward"
